@@ -2,9 +2,8 @@
 
 Provides basic geo operations
 
-[![Build Status](https://travis-ci.org/4yopping/zoquete.svg?branch=master)](https://travis-ci.org/4yopping/zoquete)
-[![npm version](https://badge.fury.io/js/zoquete.svg)](http://badge.fury.io/js/zoquete)
-[![Inline docs](http://inch-ci.org/github/4yopping/zoquete.svg?branch=master)](http://inch-ci.org/github/4yopping/zoquete)
+[![Build Status](https://travis-ci.org/Cereceres/koords.svg)](https://travis-ci.org/Cereceres/koords)
+
 
 ## Install
 
@@ -44,7 +43,6 @@ Add unit tests for any new or changed functionality. Lint and test your code.  F
 The MIT License (MIT)
 
 Copyright (c) 2015 Jesús Edel Cereceres Delgado [@Cereceres](https://github.com/Cereceres), Sergio Morlán Páramo[@serchserch](https://github.com/serchserch)
->>>>>>> Update Readme
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

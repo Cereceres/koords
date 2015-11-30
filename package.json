@@ -4,7 +4,7 @@
   "description": "Library to provide some basic geo functions",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "mocha test/index"
   },
   "keywords": [
     "geo",
