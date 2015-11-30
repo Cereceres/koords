@@ -39,11 +39,11 @@ let transCoord = function (points, center) {
  */
 function atan(x, y) {
   if (x !== 0) {
-    let sign = Math.sign(y)
-    return Math.atan(y / x)+ pi2 + pi * (1 - sign) / 2
+    let sign = Math.sign(x)
+    return Math.atan(y / x)+pi * (1 - sign) / 2
   } else {
     var sign = Math.sign(y)
-    return pi2 * (sign-1)/2 +(sign+1)*3*pi2
+    return pi2 * (sign+1)/2 +(1-sign)/2*3*pi2
   }
 }
 
@@ -63,20 +63,33 @@ let rotateCoord = function (points) {
   return array
 }
 
+function Ordenate(points) {
+  var minor
+  for (var i = 1; i < points.length; i++) {
+    for (var j = i; j>0; j--) {
+      if ( points[j][1]< points[j-1][1]) {
+        minor  =points[j]
+        points [j] = points[j-1]
+        points[j-1] = minor
+      }else { break}
+    }
+  }
+  return points
+}
+
 /**
  *
  */
 let limit = function (point, array) {
-  let j = array.length - 1
-  for (let i = 0; i < array.length; i++) {
-    let theta1 = array[j][0]
-    let theta2 = array[i][1]
-    let theta = point[1]
-    if (theta <= theta2 && theta >= theta1) {
-      return j
+  let i
+  let theta = point[1]
+  for (i = 0; i < array.length; i++) {
+    let theta1 = array[i][1]
+    if (theta <= theta1 ) {
+      return i
     }
-    j = i
   }
+  return i
 }
 
 /**
@@ -129,11 +142,13 @@ module.exports = {
     let A1 = polygonArea(polygon)
     let center = findCentroid(polygon)
     let polygonTrans = transCoord(polygon, center)
-    let polygonRotate = rotateCoord(polygonTrans)
-    let locationRotate = rotateCoord(transCoord([location], center))
+    let polygonRotate = rotateCoord(polygonTrans)    
+    let locationTrans = transCoord([location], center)
+    let locationRotate = rotateCoord(locationTrans)
+    polygonRotate = Ordenate(polygonRotate)
     let _limit = limit(locationRotate[0], polygonRotate)
     insertPoint(locationRotate[0], _limit, polygonRotate)
     let A2 = polygonAreaRot(polygonRotate)
-    return A2 < A1
+    return (A2 <= A1)
   }
 }
