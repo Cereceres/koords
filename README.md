@@ -3,7 +3,7 @@
 Provides basic geo operations
 
 [![Build Status](https://travis-ci.org/Cereceres/koords.svg)](https://travis-ci.org/Cereceres/koords)
-
+[![Inline docs](http://inch-ci.org/github/Cereceres/koords.svg?branch=master)](http://inch-ci.org/github/Cereceres/koords)
 
 ## Install
 
