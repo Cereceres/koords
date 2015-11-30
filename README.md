@@ -1,43 +1,50 @@
-# koords
+# Koords
 
-## Installation
+Provides basic geo operations
+
+[![Build Status](https://travis-ci.org/4yopping/zoquete.svg?branch=master)](https://travis-ci.org/4yopping/zoquete)
+[![npm version](https://badge.fury.io/js/zoquete.svg)](http://badge.fury.io/js/zoquete)
+[![Inline docs](http://inch-ci.org/github/4yopping/zoquete.svg?branch=master)](http://inch-ci.org/github/4yopping/zoquete)
+
+## Install
 
 ```bash
 $ npm install koords
 ```
 
+# Usage
 
-## Features
-
-
-
-## API
-
-### `koords`
-
-Initialize `koords`
-
-```js
-var koords = require('koords');
-```
 ##### `containsLocation`
+
 With a set of points=[[x1,y1],[x2,y2]....] that form a polygon find is a point extra given is inside or out of the polygon given too.
 
 ```js
-var points = [[-1,1],[1,1],[1,-1],[-1,-1]]
-var point = [2,6]
-koords.containsLocation(points,point)// => False
-```
 
+let koors = require('koords')
+
+koords.containsLocation([
+  [19.541297755574497, -99.30722236633301],
+  [19.529811407768875, -99.30644989013672],
+  [19.531510144485384, -99.28825378417969],
+  [19.526656563613997, -99.25992965698242],
+  [19.54388611549836, -99.25538063049316],
+], [19.54388611549836, -99.25538063049316])
+// Returns true or false
+
+```
 Object with differents numerics methods to calculate the derivative of a function.
+
 ##Contributing
 In lieu of a formal style guide, take care to maintain the existing coding style.
 Add unit tests for any new or changed functionality. Lint and test your code.  For any bugs report please contact to me via e-mail: cereceres@ciencias.unam.mx.
 
-##Licence
+
+## License
+
 The MIT License (MIT)
 
-Copyright (c) 2015 Jesús Edel Cereceres and Sergio Morlàn , 4yopping and all the related trademarks.
+Copyright (c) 2015 Jesús Edel Cereceres Delgado [@Cereceres](https://github.com/Cereceres), Sergio Morlán Páramo[@serchserch](https://github.com/serchserch)
+>>>>>>> Update Readme
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
