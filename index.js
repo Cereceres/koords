@@ -2,6 +2,10 @@
 
 let pi = Math.PI
 let pi2 = pi / 2
+let earthR= 6371
+var cos = Math.cos
+var sin = Math.sin
+require('./truncate')()
 
 /**
  *
@@ -63,7 +67,7 @@ let rotateCoord = function (points) {
   return array
 }
 
-function Ordenate(points) {
+function ordenate(points) {
   var minor
   for (var i = 1; i < points.length; i++) {
     for (var j = i; j>0; j--) {
@@ -124,31 +128,76 @@ function polygonAreaRot(points) {
     r2 = points[i][0]
     theta1 = points[j][1]
     theta2 = points[i][1]
-    x1 = r1 * Math.cos(theta1)
-    x2 = r2 * Math.cos(theta2)
-    y1 = r1 * Math.sin(theta1)
-    y2 = r2 * Math.sin(theta2)
+    x1 = r1 * cos(theta1)
+    x2 = r2 * cos(theta2)
+    y1 = r1 * sin(theta1)
+    y2 = r2 * sin(theta2)
     area = area + (x1 + x2) * (y1 - y2)
     j = i //j is previous vertex to i
   }
   return Math.abs(area / 2)
 }
 
+function haversine(theta) {
+    return Math.pow(sin(theta/2),2)
+}
+
+
+function ahaversine(x) {
+    return 2*Math.asin(Math.sqrt(x))
+}
+
+var getDistance =function (point1,point2) {
+    let phi1 = point1.latitud/180*pi,
+    phi2 = point2.latitud/180*pi,
+    lambda1 = point1.longitud/180*pi,
+    lambda2  = point2.longitud/180*pi
+    let distance = earthR *
+    ahaversine( haversine(phi1-phi2)+cos(phi2)*cos(phi2)*haversine(lambda1-lambda2)   )
+    return distance
+}
+getDistance.toMiles =  function(point1,point2) {
+    let phi1 = point1.latitud/180*pi,
+    phi2 = point2.latitud/180*pi,
+    lambda1 = point1.longitud/180*pi,
+    lambda2  = point2.longitud/180*pi
+    let distance = earthR *
+    ahaversine( haversine(phi1-phi2)+cos(phi2)*cos(phi2)*haversine(lambda1-lambda2)   )
+    return distance*0.621371
+}
 /**
- *
+ * Export the functions :
+ * containsLocation, getArea
  */
 module.exports = {
+  /**
+   * @function containsLocation
+   * @param {Array} set of points
+   * @param {Array} location to test
+  * @return {Boolean} true  if is inside or false other case
+   */
   containsLocation: function (polygon, location) {
     let A1 = polygonArea(polygon)
     let center = findCentroid(polygon)
     let polygonTrans = transCoord(polygon, center)
-    let polygonRotate = rotateCoord(polygonTrans)    
+    let polygonRotate = rotateCoord(polygonTrans)
     let locationTrans = transCoord([location], center)
     let locationRotate = rotateCoord(locationTrans)
-    polygonRotate = Ordenate(polygonRotate)
+    polygonRotate = ordenate(polygonRotate)
     let _limit = limit(locationRotate[0], polygonRotate)
     insertPoint(locationRotate[0], _limit, polygonRotate)
     let A2 = polygonAreaRot(polygonRotate)
     return (A2 <= A1)
-  }
+  },
+
+  getArea: function (polygon) {
+    let center = findCentroid(polygon)
+    let polygonTrans = transCoord(polygon, center)
+    let polygonRotate = rotateCoord(polygonTrans)
+    polygonRotate = ordenate(polygonRotate)
+    let A2 = polygonAreaRot(polygonRotate)
+    return A2
+  },
+
+  getDistance:  getDistance
 }
