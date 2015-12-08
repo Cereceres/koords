@@ -9,6 +9,7 @@ var sqrt = Math.sqrt
 require('./truncate')()
 
 /**
+* @function findCentroid
  * Returns poligon center
  * @param points {Array} - Polygon points
  * @returns {Array} - Center [x, y]
@@ -27,10 +28,11 @@ let findCentroid = function (points) {
 }
 
 /**
- * Transform coords
+* @function transCoord
+ * Translate coords
  * @param points {Array} - Polygon points
  * @param center {Array} - Center [x, y]
- * @returns {Array} - Transformed coords
+ * @returns {Array} - Translate coords
  */
 let transCoord = function (points, center) {
   let x = center[0]
@@ -43,6 +45,13 @@ let transCoord = function (points, center) {
   }
   return array
 }
+/**
+* @function invTransCoord
+ * Translate inverse coords
+ * @param points {Array} - Polygon points
+ * @param center {Array} - Center [x, y]
+ * @returns {Array} - Translate coords
+ */
 
 let invTransCoord = function (points, center) {
   let x = center[0]
@@ -57,10 +66,11 @@ let invTransCoord = function (points, center) {
 }
 
 /**
- * Transform coords
+* @function atan
+ * atan function
  * @param x {Number} - X
  * @param y {Number} - Y
- * @returns {Array} - Transformed coords
+ * @returns {Number} - theta
  */
 let atan = function (x, y) {
   if (x !== 0) {
@@ -73,6 +83,7 @@ let atan = function (x, y) {
 }
 
 /**
+* @function rotateCoord
  *  Rotates points of polygon
  * @param points {Array} - Polygon points
  * @returns {Array} - Rotated poygon
@@ -91,6 +102,7 @@ let rotateCoord = function (points) {
 }
 
 /**
+* @function ordenate
  * Sorts the polygon points
  * @param points {Array} - Polygon points
  * @returns {Array} - Sorted poygon
@@ -112,6 +124,7 @@ let ordenate = function (points) {
 }
 
 /**
+* @function limit
  * Returns position for the new pont
  * @param points {Array} - Polygon points
  * @param array {Array} - New Point
@@ -130,6 +143,7 @@ let limit = function (point, array) {
 }
 
 /**
+* @function insertPoint
  * Inserts new point into the polygon
  * @param point {Array} - New point
  * @param index {Array} - Position to insert
@@ -141,7 +155,8 @@ let insertPoint = function (point, index, points) {
 }
 
 /**
- * Calcs the area of polygon
+* @function polygonArea
+ * Calcs the plane area of polygon
  * @param points {Array} - Polygon points
  * @returns {Number} - Poligon area
  */
@@ -156,7 +171,8 @@ let polygonArea = function (points) {
 }
 
 /**
- * Calcs the area of polygon
+* @function polygonAreaRot
+ * Calcs the area of rotate polygon
  * @param points {Array} - Polygon points
  * @returns {Number} - Poligon area
  */
@@ -179,34 +195,65 @@ let polygonAreaRot = function (points) {
   return Math.abs(area / 2)
 }
 
+/**
+* @function haversine
+ * Haversine function
+ * @param {Number} theta
+ * @returns {Number} - Haversine(theta)
+ */
 function haversine(theta) {
     return Math.pow(sin(theta/2),2)
 }
 
-
+/**
+* @function ahaversine
+ * Haversine inverse function
+ * @param {Number} theta
+ * @returns {Number} - Haversine(theta)
+ */
 function ahaversine(x) {
     return 2*Math.asin(sqrt(x))
 }
-
+/**
+ * @function getDistance
+ * Get the distance between two points over a spherical surface.
+ * @param {Object} with properties latitude and longitude.
+ * @param {Object} with properties latitude and longitude.
+ * @returns {Number} - Spherical distance
+ */
 var getDistance =function (point1,point2) {
-    let phi1 = point1.latitud/180*pi,
-    phi2 = point2.latitud/180*pi,
+    let phi1 = point1.latitude/180*pi,
+    phi2 = point2.latitude/180*pi,
     lambda1 = point1.longitud/180*pi,
     lambda2  = point2.longitud/180*pi
     let distance = earthR *
     ahaversine( haversine(phi1-phi2)+cos(phi2)*cos(phi2)*haversine(lambda1-lambda2)   )
     return distance
 }
+/**
+* @method  toMiles
+ * Get the distance in miles units between two points over a spherical surface.
+ * @param {Object} with properties latitude and longitude.
+ * @param {Object} with properties latitude and longitude.
+ * @returns {Number} - Spherical distance
+ */
 getDistance.toMiles =  function(point1,point2) {
-    let phi1 = point1.latitud/180*pi,
-    phi2 = point2.latitud/180*pi,
+    let phi1 = point1.latitude/180*pi,
+    phi2 = point2.latitude/180*pi,
     lambda1 = point1.longitud/180*pi,
     lambda2  = point2.longitud/180*pi
     let distance = earthR *
     ahaversine( haversine(phi1-phi2)+cos(phi2)*cos(phi2)*haversine(lambda1-lambda2)   )
     return distance*0.621371
 }
-
+/**
+* @function sphericalCoords
+ * Get the cartesian coords from spherical coords
+ * @param {Number} theta
+ * @param {Number} phi
+ * @param {Number} radius
+ * @returns {Array} - the cartesian coords
+ */
 function sphericalCoords(theta,phi,radius){
     let x = radius*sin(theta)*cos(phi),
     y = radius*sin(theta)*sin(phi),
@@ -214,7 +261,14 @@ function sphericalCoords(theta,phi,radius){
     return [x,y,z]
 
 }
-
+/**
+* @function invSphericalCoords
+ * Get the spherical coords from cartesian coords
+ * @param {Number} theta
+ * @param {Number} phi
+ * @param {Number} radius
+ * @returns {Array} - the spherical coords
+ */
 function invSphericalCoords(point){
     var x = point[0],y= point[1],z= point[2]
     let R = sqrt(x*x+y*y+z*z),
@@ -224,8 +278,15 @@ function invSphericalCoords(point){
     return [theta,phi]
 
 }
+/**
+* @function stereographicProjection
+ * Get the stereographic projection over the plane
+ * @param {Object} with properties latitude and longitude
+ * @param {Number} radius
+ * @returns {Array} - the plane coords
+ */
 function stereographicProjection(point,radius){
-    let theta = (pi2-point.latitud/180*pi),
+    let theta = (pi2-point.latitude/180*pi),
     phi = point.longitud/180*pi,x,y,z
     var _point= sphericalCoords(theta,phi,radius)
     x = _point[0]
@@ -234,7 +295,13 @@ function stereographicProjection(point,radius){
     let X =2*x/(1 + z),Y =2*y/(1 + z)
     return [X,Y]
 }
-
+/**
+* @function invStereographicProjection
+ * Get the inverse stereographic projection over the sphera
+ * @param {Object} with properties latitude and longitude
+ * @param {Number} radius
+ * @returns {Array} - the spherical coords
+ */
 function invStereographicProjection(point){
     let X=point[0], Y=point[1],s = 4/(4+X*X+Y*Y),
     x = s*X,y=s*Y ,z= 2*s-1
@@ -260,7 +327,11 @@ let containsLocation = function (polygon, location) {
   let A2 = polygonAreaRot(polygonRotate)
   return (A2 <= A1)
 }
-
+/**
+ * @function getArea
+ * @param {Array} polygon
+* @return {Number} area overclosed by polygon
+ */
 let getArea= function (polygon) {
   let center = findCentroid(polygon)
   let polygonTrans = transCoord(polygon, center)
@@ -269,6 +340,11 @@ let getArea= function (polygon) {
   let A2 = polygonAreaRot(polygonRotate)
   return A2
 }
+/**
+ * @function invRotateCoord
+ * @param {Array} polygon
+* @return {Array} polygon not Rotated
+ */
 let invRotateCoord = function (points) {
   let array = [],
     r, x, y, theta
@@ -281,12 +357,17 @@ let invRotateCoord = function (points) {
   }
   return array
 }
+/**
+ * @function getAreaSpherical
+ * @param {Array} polygon
+* @return {Number} spherical area overclosed by polygon
+ */
 let getAreaSpherical= function(polygon) {
   var projectedPolygon = [],
   l=polygon.length
   for (var i = 0; i < l; i++) {
     projectedPolygon[i]= stereographicProjection(
-      {latitud :polygon[i][0],longitud :polygon[i][1] },1)
+      {latitude :polygon[i][0],longitud :polygon[i][1] },1)
   }
   let center = findCentroid(projectedPolygon)
   let polygonTrans = transCoord(projectedPolygon, center)

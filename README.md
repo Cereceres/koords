@@ -31,10 +31,10 @@ koords.containsLocation([
 // Returns true or false
 
 koords.getArea([[-1,1], [1,1], [1, -1], [-1,-1]])
-// Returns 8
+// Returns the plane area of polygon given, in this case is 4
 
-koords.getDistance({latitud : 0, longitudee:0},{latitud:90,longitude:0})
-// Returns the distance from Ecuador to pole
+koords.getDistance({latitude : 0, longitude:0},{latitude:90,longitude:0})
+// Returns the distance from Ecuador to Pole
 
 koords.getAreaSpherical([[0,0],[10,0],[10,10]])
 // Returns the spherical area of rectangle
