@@ -2,6 +2,7 @@
 
 const koords = require('../index')
 const assert = require('assert')
+require('../truncate')()
 
 describe('Koords', () => {
 
@@ -57,9 +58,10 @@ describe('Koords', () => {
     done()
   })
 
-  it('The area of a polygon with vertices: [-1,1],[1,1],[1,-1],[-1,-1] is equal to 8', (done) => {
-    let area = koords.getAreaSpherical([[0,0],[10,0],[10,10]])
-    assert(area ===19649731.095793243);
+  it('The spherical area of a polygon with vertices: [0,0],[10,0],[10,10] is equal to 8',
+   (done) => {
+    let area = koords.getAreaSpherical([[0,0],[10,0],[10,10]]).truncate(2)
+    assert(area ===19649731.09);
     done()
   })
 
