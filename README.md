@@ -30,6 +30,16 @@ koords.containsLocation([
 ], [19.54388611549836, -99.25538063049316])
 // Returns true or false
 
+koords.getArea([[-1,1], [1,1], [1, -1], [-1,-1]])
+// Returns 8
+
+koords.getDistance({latitud : 0, longitudee:0},{latitud:90,longitude:0})
+// Returns the distance from Ecuador to pole
+
+koords.getAreaSpherical([[0,0],[10,0],[10,10]])
+// Returns the spherical area of rectangle
+// formed by the vertices [0,0],[10,0],[10,10].
+
 ```
 Object with differents numerics methods to calculate the derivative of a function.
 

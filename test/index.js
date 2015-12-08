@@ -46,7 +46,6 @@ describe('Koords', () => {
        -1,
        -1
     ]])
-    console.log('area=',area);
     assert(area ===4);
     done()
   })
@@ -54,8 +53,13 @@ describe('Koords', () => {
   it('The distance from ecuador to polo is 40.007.161/4', (done) => {
 
     let distance =  koords.getDistance({latitud : 0, longitud:0},{latitud:90,longitud:0})
-    console.log('distance=',distance);
     assert.equal(distance,10007.543398010284);
+    done()
+  })
+
+  it('The area of a polygon with vertices: [-1,1],[1,1],[1,-1],[-1,-1] is equal to 8', (done) => {
+    let area = koords.getAreaSpherical([[0,0],[10,0],[10,10]])
+    assert(area ===19649731.095793243);
     done()
   })
 

@@ -5,6 +5,7 @@ let pi2 = pi / 2
 let earthR= 6371
 var cos = Math.cos
 var sin = Math.sin
+var sqrt = Math.sqrt
 require('./truncate')()
 
 /**
@@ -43,6 +44,18 @@ let transCoord = function (points, center) {
   return array
 }
 
+let invTransCoord = function (points, center) {
+  let x = center[0]
+  let y = center[1]
+  let array = []
+  for (let i = 0; i < points.length; i++) {
+    array[i] = []
+    array[i][0] = points[i][0] + x
+    array[i][1] = points[i][1] + y
+  }
+  return array
+}
+
 /**
  * Transform coords
  * @param x {Number} - X
@@ -70,23 +83,19 @@ let rotateCoord = function (points) {
   for (let i = 0; i < points.length; i++) {
     x = points[i][0]
     y = points[i][1]
-    r = Math.sqrt(x * x + y * y)
+    r = sqrt(x * x + y * y)
     theta = atan(x, y)
     array[i] = [r, theta]
   }
   return array
 }
 
-<<<<<<< HEAD
-function ordenate(points) {
-=======
 /**
  * Sorts the polygon points
  * @param points {Array} - Polygon points
  * @returns {Array} - Sorted poygon
  */
 let ordenate = function (points) {
->>>>>>> origin/master
   var minor
   for (var i = 1; i < points.length; i++) {
     for (var j = i; j > 0; j--) {
@@ -176,7 +185,7 @@ function haversine(theta) {
 
 
 function ahaversine(x) {
-    return 2*Math.asin(Math.sqrt(x))
+    return 2*Math.asin(sqrt(x))
 }
 
 var getDistance =function (point1,point2) {
@@ -197,17 +206,47 @@ getDistance.toMiles =  function(point1,point2) {
     ahaversine( haversine(phi1-phi2)+cos(phi2)*cos(phi2)*haversine(lambda1-lambda2)   )
     return distance*0.621371
 }
-/**
-<<<<<<< HEAD
- * Export the functions :
- * containsLocation, getArea
-=======
- * Returns if polygon contains the the position in location
- * @param polygon {Array} - Polygon points
- * @param location {Array} - Location points
- * @returns {Boolean} - If point is inside
->>>>>>> origin/master
- */
+
+function sphericalCoords(theta,phi,radius){
+    let x = radius*sin(theta)*cos(phi),
+    y = radius*sin(theta)*sin(phi),
+    z = radius*cos(theta)
+    return [x,y,z]
+
+}
+
+function invSphericalCoords(point){
+    var x = point[0],y= point[1],z= point[2]
+    let R = sqrt(x*x+y*y+z*z),
+    rho = sqrt(x*x+y*y),
+    theta = Math.acos(z/R)/pi*180,
+    phi = (Math.acos(x/rho)+(1-Math.sign(x))/2*pi)/pi*180
+    return [theta,phi]
+
+}
+function stereographicProjection(point,radius){
+    let theta = (pi2-point.latitud/180*pi),
+    phi = point.longitud/180*pi,x,y,z
+    var _point= sphericalCoords(theta,phi,radius)
+    x = _point[0]
+     y = _point[1]
+    z = _point[2]
+    let X =2*x/(1 + z),Y =2*y/(1 + z)
+    return [X,Y]
+}
+
+function invStereographicProjection(point){
+    let X=point[0], Y=point[1],s = 4/(4+X*X+Y*Y),
+    x = s*X,y=s*Y ,z= 2*s-1
+    var spherical = invSphericalCoords([x,y,z])
+    return [(90-spherical[0]),spherical[1]]
+}
+ /**
+  * @function containsLocation
+  * @param {Array} set of points
+  * @param {Array} location to test
+ * @return {Boolean} true  if is inside or false other case
+  */
 let containsLocation = function (polygon, location) {
   let A1 = polygonArea(polygon)
   let center = findCentroid(polygon)
@@ -222,39 +261,70 @@ let containsLocation = function (polygon, location) {
   return (A2 <= A1)
 }
 
+let getArea= function (polygon) {
+  let center = findCentroid(polygon)
+  let polygonTrans = transCoord(polygon, center)
+  let polygonRotate = rotateCoord(polygonTrans)
+  polygonRotate = ordenate(polygonRotate)
+  let A2 = polygonAreaRot(polygonRotate)
+  return A2
+}
+let invRotateCoord = function (points) {
+  let array = [],
+    r, x, y, theta
+  for (let i = 0; i < points.length; i++) {
+    r = points[i][0]
+    theta = points[i][1]
+    x = r*cos(theta)
+    y = r*sin(theta)
+    array[i] = [x, y]
+  }
+  return array
+}
+let getAreaSpherical= function(polygon) {
+  var projectedPolygon = [],
+  l=polygon.length
+  for (var i = 0; i < l; i++) {
+    projectedPolygon[i]= stereographicProjection(
+      {latitud :polygon[i][0],longitud :polygon[i][1] },1)
+  }
+  let center = findCentroid(projectedPolygon)
+  let polygonTrans = transCoord(projectedPolygon, center)
+  let polygonRotate = rotateCoord(polygonTrans)
+  polygonRotate = ordenate(polygonRotate)
+  polygonRotate = invRotateCoord(polygonRotate)
+  polygonRotate= invTransCoord(polygonRotate, center)
+  let sphericalPolygon = []
+  for ( i = 0; i < l; i++) {
+    sphericalPolygon[i]=invStereographicProjection(polygonRotate[i])
+  }
+  i = l-1
+  var E=0,k,theta1,theta2 ,theta3 ,phi1,phi2 ,phi3,a,b,c,C
+
+  for ( var j = 0; j < l; j++) {
+    k=(j+1)%l
+    phi1 = sphericalPolygon[i][0]/180*pi
+    theta1 = sphericalPolygon[i][1]/180*pi
+    phi2 = sphericalPolygon[j][0]/180*pi
+    theta2 = sphericalPolygon[j][1]/180*pi
+    phi3 = sphericalPolygon[k][0]/180*pi
+    theta3 = sphericalPolygon[k][1]/180*pi
+    a =cos(theta1)*cos(theta2)+sin(theta1)*sin(theta2)*cos(phi1 - phi2)
+    b=cos(theta3)*cos(theta2)+sin(theta3)*sin(theta2)*cos(phi3 - phi2)
+    c=cos(theta3)*cos(theta1)+sin(theta3)*sin(theta1)*cos(phi3 - phi1)
+    C = Math.acos( (cos(c)-cos(a)*cos(b))/sin(a)/sin(b))
+    E= E+C
+    i=j
+  }
+  E = E-(l-2)*pi
+  return E*earthR*earthR
+}
+
 module.exports = {
-<<<<<<< HEAD
-  /**
-   * @function containsLocation
-   * @param {Array} set of points
-   * @param {Array} location to test
-  * @return {Boolean} true  if is inside or false other case
-   */
-  containsLocation: function (polygon, location) {
-    let A1 = polygonArea(polygon)
-    let center = findCentroid(polygon)
-    let polygonTrans = transCoord(polygon, center)
-    let polygonRotate = rotateCoord(polygonTrans)
-    let locationTrans = transCoord([location], center)
-    let locationRotate = rotateCoord(locationTrans)
-    polygonRotate = ordenate(polygonRotate)
-    let _limit = limit(locationRotate[0], polygonRotate)
-    insertPoint(locationRotate[0], _limit, polygonRotate)
-    let A2 = polygonAreaRot(polygonRotate)
-    return (A2 <= A1)
-  },
 
-  getArea: function (polygon) {
-    let center = findCentroid(polygon)
-    let polygonTrans = transCoord(polygon, center)
-    let polygonRotate = rotateCoord(polygonTrans)
-    polygonRotate = ordenate(polygonRotate)
-    let A2 = polygonAreaRot(polygonRotate)
-    return A2
-  },
+  containsLocation: containsLocation,
+  getArea: getArea,
+  getDistance:  getDistance,
+  getAreaSpherical :getAreaSpherical
 
-  getDistance:  getDistance
-=======
-  containsLocation: containsLocation
->>>>>>> origin/master
 }
