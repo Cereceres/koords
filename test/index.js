@@ -31,7 +31,7 @@ describe('Koords', () => {
   })
 
 
-  it('The area of a polygon with vertices: [-1,1],[1,1],[1,-1],[-1,-1] is equal to 8', (done) => {
+  it('The area of a polygon with vertices: [-1,1],[1,1],[1,-1],[-1,-1] is equal to 4', (done) => {
 
     let area = koords.getArea([[
       -1,
