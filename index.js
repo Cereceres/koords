@@ -224,10 +224,11 @@ function ahaversine(x) {
 var getDistance =function (point1,point2) {
     let phi1 = point1.latitude/180*pi,
     phi2 = point2.latitude/180*pi,
-    lambda1 = point1.longitud/180*pi,
-    lambda2  = point2.longitud/180*pi
+    lambda1 = point1.longitude/180*pi,
+    lambda2  = point2.longitude/180*pi
     let distance = earthR *
-    ahaversine( haversine(phi1-phi2)+cos(phi2)*cos(phi2)*haversine(lambda1-lambda2)   )
+    ahaversine( haversine(phi1-phi2)+cos(phi2)*cos(phi2)*haversine(lambda1-lambda2))
+
     return distance
 }
 /**
@@ -240,8 +241,8 @@ var getDistance =function (point1,point2) {
 getDistance.toMiles =  function(point1,point2) {
     let phi1 = point1.latitude/180*pi,
     phi2 = point2.latitude/180*pi,
-    lambda1 = point1.longitud/180*pi,
-    lambda2  = point2.longitud/180*pi
+    lambda1 = point1.longitude/180*pi,
+    lambda2  = point2.longitude/180*pi
     let distance = earthR *
     ahaversine( haversine(phi1-phi2)+cos(phi2)*cos(phi2)*haversine(lambda1-lambda2)   )
     return distance*0.621371

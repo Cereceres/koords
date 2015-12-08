@@ -53,7 +53,7 @@ describe('Koords', () => {
 
   it('The distance from ecuador to polo is 40.007.161/4', (done) => {
 
-    let distance =  koords.getDistance({latitud : 0, longitud:0},{latitud:90,longitud:0})
+    let distance =  koords.getDistance({latitude : 0, longitude:0},{latitude:90,longitude:0})
     assert.equal(distance,10007.543398010284);
     done()
   })
