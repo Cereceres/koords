@@ -52,7 +52,6 @@ let transCoord = function (points, center) {
  * @param center {Array} - Center [x, y]
  * @returns {Array} - Translate coords
  */
-
 let invTransCoord = function (points, center) {
   let x = center[0]
   let y = center[1]
