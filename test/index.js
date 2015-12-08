@@ -58,7 +58,7 @@ describe('Koords', () => {
     done()
   })
 
-  it('The spherical area of a polygon with vertices: [0,0],[10,0],[10,10] is equal to 8',
+  it('The spherical area of a polygon with vertices: [0,0],[10,0],[10,10]',
    (done) => {
     let area = koords.getAreaSpherical([[0,0],[10,0],[10,10]]).truncate(2)
     assert(area ===19649731.09);

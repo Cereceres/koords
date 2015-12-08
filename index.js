@@ -288,7 +288,7 @@ function invSphericalCoords(point){
  */
 function stereographicProjection(point,radius){
     let theta = (pi2-point.latitude/180*pi),
-    phi = point.longitud/180*pi,x,y,z
+    phi = point.longitude/180*pi,x,y,z
     var _point= sphericalCoords(theta,phi,radius)
     x = _point[0]
      y = _point[1]
@@ -368,7 +368,7 @@ let getAreaSpherical= function(polygon) {
   l=polygon.length
   for (var i = 0; i < l; i++) {
     projectedPolygon[i]= stereographicProjection(
-      {latitude :polygon[i][0],longitud :polygon[i][1] },1)
+      {latitude :polygon[i][0],longitude :polygon[i][1] },1)
   }
   let center = findCentroid(projectedPolygon)
   let polygonTrans = transCoord(projectedPolygon, center)
