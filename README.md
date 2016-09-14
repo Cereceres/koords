@@ -13,8 +13,6 @@ $ npm install koords
 
 # Usage
 
-##### `containsLocation`
-
 With a set of points=[[x1,y1],[x2,y2]....] that form a polygon find is a point extra given is inside or out of the polygon given too.
 
 ```js
