@@ -1,12 +1,12 @@
-'use strict'
+'use strict';
 
-let pi = Math.PI
-let pi2 = pi / 2
-let earthR= 6371
-var cos = Math.cos
-var sin = Math.sin
-var sqrt = Math.sqrt
-require('./truncate')()
+const pi = Math.PI;
+const pi2 = pi / 2;
+const earthR = 6371;
+const cos = Math.cos;
+const sin = Math.sin;
+const sqrt = Math.sqrt;
+require('./truncate')();
 
 /**
 * @function findCentroid
@@ -14,18 +14,18 @@ require('./truncate')()
  * @param points {Array} - Polygon points
  * @returns {Array} - Center [x, y]
  */
-let findCentroid = function (points) {
-  let x = 0,
-    y = 0,
-    l = points.length
-  for (let i = 0; i < l; i++) {
-    x = x + points[i][0]
-    y = y + points[i][1]
-  }
-  x = x / l
-  y = y / l
-  return [x, y]
-}
+const findCentroid = function(points) {
+    let x = 0,
+        y = 0,
+        l = points.length;
+    for (let i = 0; i < l; i++) {
+        x = x + points[i][0];
+        y = y + points[i][1];
+    }
+    x = x / l;
+    y = y / l;
+    return [ x, y ];
+};
 
 /**
 * @function transCoord
@@ -34,17 +34,18 @@ let findCentroid = function (points) {
  * @param center {Array} - Center [x, y]
  * @returns {Array} - Translate coords
  */
-let transCoord = function (points, center) {
-  let x = center[0]
-  let y = center[1]
-  let array = []
-  for (let i = 0; i < points.length; i++) {
-    array[i] = []
-    array[i][0] = points[i][0] - x
-    array[i][1] = points[i][1] - y
-  }
-  return array
-}
+const transCoord = function(points, center) {
+    const x = center[0];
+    const y = center[1];
+    const array = [];
+    for (let i = 0; i < points.length; i++) {
+        array[i] = [];
+        array[i][0] = points[i][0] - x;
+        array[i][1] = points[i][1] - y;
+    }
+    return array;
+};
+
 /**
 * @function invTransCoord
  * Translate inverse coords
@@ -52,17 +53,17 @@ let transCoord = function (points, center) {
  * @param center {Array} - Center [x, y]
  * @returns {Array} - Translate coords
  */
-let invTransCoord = function (points, center) {
-  let x = center[0]
-  let y = center[1]
-  let array = []
-  for (let i = 0; i < points.length; i++) {
-    array[i] = []
-    array[i][0] = points[i][0] + x
-    array[i][1] = points[i][1] + y
-  }
-  return array
-}
+const invTransCoord = function(points, center) {
+    const x = center[0];
+    const y = center[1];
+    const array = [];
+    for (let i = 0; i < points.length; i++) {
+        array[i] = [];
+        array[i][0] = points[i][0] + x;
+        array[i][1] = points[i][1] + y;
+    }
+    return array;
+};
 
 /**
 * @function atan
@@ -71,15 +72,14 @@ let invTransCoord = function (points, center) {
  * @param y {Number} - Y
  * @returns {Number} - theta
  */
-let atan = function (x, y) {
-  if (x !== 0) {
-    let sign = Math.sign(x)
-    return Math.atan(y / x) + pi * (1 - sign) / 2
-  } else {
-    var sign = Math.sign(y)
-    return pi2 * (sign + 1) / 2 + (1 - sign) / 2 * 3 * pi2
-  }
-}
+const atan = function(x, y) {
+    if (x !== 0) {
+        const sign = Math.sign(x);
+        return Math.atan(y / x) + pi * (1 - sign) / 2;
+    }
+    const sign = Math.sign(y);
+    return pi2 * (sign + 1) / 2 + (1 - sign) / 2 * 3 * pi2;
+};
 
 /**
 * @function rotateCoord
@@ -87,18 +87,18 @@ let atan = function (x, y) {
  * @param points {Array} - Polygon points
  * @returns {Array} - Rotated poygon
  */
-let rotateCoord = function (points) {
-  let array = [],
-    r, x, y, theta
-  for (let i = 0; i < points.length; i++) {
-    x = points[i][0]
-    y = points[i][1]
-    r = sqrt(x * x + y * y)
-    theta = atan(x, y)
-    array[i] = [r, theta]
-  }
-  return array
-}
+const rotateCoord = function(points) {
+    let array = [],
+        r, x, y, theta;
+    for (let i = 0; i < points.length; i++) {
+        x = points[i][0];
+        y = points[i][1];
+        r = sqrt(x * x + y * y);
+        theta = atan(x, y);
+        array[i] = [ r, theta ];
+    }
+    return array;
+};
 
 /**
 * @function ordenate
@@ -106,21 +106,21 @@ let rotateCoord = function (points) {
  * @param points {Array} - Polygon points
  * @returns {Array} - Sorted poygon
  */
-let ordenate = function (points) {
-  var minor
-  for (var i = 1; i < points.length; i++) {
-    for (var j = i; j > 0; j--) {
-      if (points[j][1] < points[j - 1][1]) {
-        minor = points[j]
-        points[j] = points[j - 1]
-        points[j - 1] = minor
-      } else {
-        break
-      }
+const ordenate = function(points) {
+    let minor;
+    for (let i = 1; i < points.length; i++) {
+        for (let j = i; j > 0; j--) {
+            if (points[j][1] < points[j - 1][1]) {
+                minor = points[j];
+                points[j] = points[j - 1];
+                points[j - 1] = minor;
+            } else {
+                break;
+            }
+        }
     }
-  }
-  return points
-}
+    return points;
+};
 
 /**
 * @function limit
@@ -129,17 +129,17 @@ let ordenate = function (points) {
  * @param array {Array} - New Point
  * @returns {Number} - Position of new point
  */
-let limit = function (point, array) {
-  let i
-  let theta = point[1]
-  for (i = 0; i < array.length; i++) {
-    let theta1 = array[i][1]
-    if (theta <= theta1) {
-      return i
+const limit = function(point, array) {
+    let i;
+    const theta = point[1];
+    for (i = 0; i < array.length; i++) {
+        const theta1 = array[i][1];
+        if (theta <= theta1) {
+            return i;
+        }
     }
-  }
-  return i
-}
+    return i;
+};
 
 /**
 * @function insertPoint
@@ -149,9 +149,9 @@ let limit = function (point, array) {
  * @param points {Array} - Polygon points
  * @returns {Array} - New polygon
  */
-let insertPoint = function (point, index, points) {
-  return points.splice(index, 0, point)
-}
+const insertPoint = function(point, index, points) {
+    return points.splice(index, 0, point);
+};
 
 /**
 * @function polygonArea
@@ -159,15 +159,15 @@ let insertPoint = function (point, index, points) {
  * @param points {Array} - Polygon points
  * @returns {Number} - Poligon area
  */
-let polygonArea = function (points) {
-  let area = 0 // Accumulates area in the loop
-  let j = points.length - 1 // The last vertex is the 'previous' one to the first
-  for (let i = 0; i < points.length; i++) {
-    area = area + (points[j][0] + points[i][0]) * (points[j][1] - points[i][1]);
-    j = i; //j is previous vertex to i
-  }
-  return Math.abs(area / 2)
-}
+const polygonArea = function(points) {
+    let area = 0; // Accumulates area in the loop
+    let j = points.length - 1; // The last vertex is the 'previous' one to the first
+    for (let i = 0; i < points.length; i++) {
+        area = area + (points[j][0] + points[i][0]) * (points[j][1] - points[i][1]);
+        j = i; // j is previous vertex to i
+    }
+    return Math.abs(area / 2);
+};
 
 /**
 * @function polygonAreaRot
@@ -175,24 +175,24 @@ let polygonArea = function (points) {
  * @param points {Array} - Polygon points
  * @returns {Number} - Poligon area
  */
-let polygonAreaRot = function (points) {
-  let area = 0 // Accumulates area in the loop
-  let j = points.length - 1 // The last vertex is the 'previous' one to the first
-  let x1, x2, y1, y2, r1, theta1, r2, theta2
-  for (let i = 0; i < points.length; i++) {
-    r1 = points[j][0]
-    r2 = points[i][0]
-    theta1 = points[j][1]
-    theta2 = points[i][1]
-    x1 = r1 * cos(theta1)
-    x2 = r2 * cos(theta2)
-    y1 = r1 * sin(theta1)
-    y2 = r2 * sin(theta2)
-    area = area + (x1 + x2) * (y1 - y2)
-    j = i //j is previous vertex to i
-  }
-  return Math.abs(area / 2)
-}
+const polygonAreaRot = function(points) {
+    let area = 0; // Accumulates area in the loop
+    let j = points.length - 1; // The last vertex is the 'previous' one to the first
+    let x1, x2, y1, y2, r1, theta1, r2, theta2;
+    for (let i = 0; i < points.length; i++) {
+        r1 = points[j][0];
+        r2 = points[i][0];
+        theta1 = points[j][1];
+        theta2 = points[i][1];
+        x1 = r1 * cos(theta1);
+        x2 = r2 * cos(theta2);
+        y1 = r1 * sin(theta1);
+        y2 = r2 * sin(theta2);
+        area = area + (x1 + x2) * (y1 - y2);
+        j = i; // j is previous vertex to i
+    }
+    return Math.abs(area / 2);
+};
 
 /**
 * @function haversine
@@ -201,7 +201,7 @@ let polygonAreaRot = function (points) {
  * @returns {Number} - Haversine(theta)
  */
 function haversine(theta) {
-    return Math.pow(sin(theta/2),2)
+    return Math.pow(sin(theta / 2), 2);
 }
 
 /**
@@ -211,8 +211,9 @@ function haversine(theta) {
  * @returns {Number} - Haversine(theta)
  */
 function ahaversine(x) {
-    return 2*Math.asin(sqrt(x))
+    return 2 * Math.asin(sqrt(x));
 }
+
 /**
  * @function getDistance
  * Get the distance between two points over a spherical surface.
@@ -220,16 +221,17 @@ function ahaversine(x) {
  * @param {Object} with properties latitude and longitude.
  * @returns {Number} - Spherical distance
  */
-var getDistance =function (point1,point2) {
-    let phi1 = point1.latitude/180*pi,
-    phi2 = point2.latitude/180*pi,
-    lambda1 = point1.longitude/180*pi,
-    lambda2  = point2.longitude/180*pi
-    let distance = earthR *
-    ahaversine( haversine(phi1-phi2)+cos(phi2)*cos(phi2)*haversine(lambda1-lambda2))
+const getDistance = function(point1, point2) {
+    let phi1 = point1.latitude / 180 * pi,
+        phi2 = point2.latitude / 180 * pi,
+        lambda1 = point1.longitude / 180 * pi,
+        lambda2 = point2.longitude / 180 * pi;
+    const distance = earthR *
+    ahaversine(haversine(phi1 - phi2) + cos(phi2) * cos(phi2) * haversine(lambda1 - lambda2));
 
-    return distance
-}
+    return distance;
+};
+
 /**
 * @method  toMiles
  * Get the distance in miles units between two points over a spherical surface.
@@ -237,15 +239,16 @@ var getDistance =function (point1,point2) {
  * @param {Object} with properties latitude and longitude.
  * @returns {Number} - Spherical distance
  */
-getDistance.toMiles =  function(point1,point2) {
-    let phi1 = point1.latitude/180*pi,
-    phi2 = point2.latitude/180*pi,
-    lambda1 = point1.longitude/180*pi,
-    lambda2  = point2.longitude/180*pi
-    let distance = earthR *
-    ahaversine( haversine(phi1-phi2)+cos(phi2)*cos(phi2)*haversine(lambda1-lambda2)   )
-    return distance*0.621371
-}
+getDistance.toMiles = function(point1, point2) {
+    let phi1 = point1.latitude / 180 * pi,
+        phi2 = point2.latitude / 180 * pi,
+        lambda1 = point1.longitude / 180 * pi,
+        lambda2 = point2.longitude / 180 * pi;
+    const distance = earthR *
+    ahaversine(haversine(phi1 - phi2) + cos(phi2) * cos(phi2) * haversine(lambda1 - lambda2));
+    return distance * 0.621371;
+};
+
 /**
 * @function sphericalCoords
  * Get the cartesian coords from spherical coords
@@ -254,13 +257,13 @@ getDistance.toMiles =  function(point1,point2) {
  * @param {Number} radius
  * @returns {Array} - the cartesian coords
  */
-function sphericalCoords(theta,phi,radius){
-    let x = radius*sin(theta)*cos(phi),
-    y = radius*sin(theta)*sin(phi),
-    z = radius*cos(theta)
-    return [x,y,z]
-
+function sphericalCoords(theta, phi, radius) {
+    let x = radius * sin(theta) * cos(phi),
+        y = radius * sin(theta) * sin(phi),
+        z = radius * cos(theta);
+    return [ x, y, z ];
 }
+
 /**
 * @function invSphericalCoords
  * Get the spherical coords from cartesian coords
@@ -269,15 +272,15 @@ function sphericalCoords(theta,phi,radius){
  * @param {Number} radius
  * @returns {Array} - the spherical coords
  */
-function invSphericalCoords(point){
-    var x = point[0],y= point[1],z= point[2]
-    let R = sqrt(x*x+y*y+z*z),
-    rho = sqrt(x*x+y*y),
-    theta = Math.acos(z/R)/pi*180,
-    phi = (Math.acos(x/rho)+(1-Math.sign(x))/2*pi)/pi*180
-    return [theta,phi]
-
+function invSphericalCoords(point) {
+    let x = point[0], y = point[1], z = point[2];
+    let R = sqrt(x * x + y * y + z * z),
+        rho = sqrt(x * x + y * y),
+        theta = Math.acos(z / R) / pi * 180,
+        phi = (Math.acos(x / rho) + (1 - Math.sign(x)) / 2 * pi) / pi * 180;
+    return [ theta, phi ];
 }
+
 /**
 * @function stereographicProjection
  * Get the stereographic projection over the plane
@@ -285,16 +288,17 @@ function invSphericalCoords(point){
  * @param {Number} radius
  * @returns {Array} - the plane coords
  */
-function stereographicProjection(point,radius){
-    let theta = (pi2-point.latitude/180*pi),
-    phi = point.longitude/180*pi,x,y,z
-    var _point= sphericalCoords(theta,phi,radius)
-    x = _point[0]
-     y = _point[1]
-    z = _point[2]
-    let X =2*x/(1 + z),Y =2*y/(1 + z)
-    return [X,Y]
+function stereographicProjection(point, radius) {
+    let theta = pi2 - point.latitude / 180 * pi,
+        phi = point.longitude / 180 * pi, x, y, z;
+    const _point = sphericalCoords(theta, phi, radius);
+    x = _point[0];
+    y = _point[1];
+    z = _point[2];
+    let X = 2 * x / (1 + z), Y = 2 * y / (1 + z);
+    return [ X, Y ];
 }
+
 /**
 * @function invStereographicProjection
  * Get the inverse stereographic projection over the sphera
@@ -302,110 +306,114 @@ function stereographicProjection(point,radius){
  * @param {Number} radius
  * @returns {Array} - the spherical coords
  */
-function invStereographicProjection(point){
-    let X=point[0], Y=point[1],s = 4/(4+X*X+Y*Y),
-    x = s*X,y=s*Y ,z= 2*s-1
-    var spherical = invSphericalCoords([x,y,z])
-    return [(90-spherical[0]),spherical[1]]
+function invStereographicProjection(point) {
+    let X = point[0], Y = point[1], s = 4 / (4 + X * X + Y * Y),
+        x = s * X, y = s * Y, z = 2 * s - 1;
+    const spherical = invSphericalCoords([ x, y, z ]);
+    return [ 90 - spherical[0], spherical[1] ];
 }
- /**
+
+/**
   * @function containsLocation
   * @param {Array} set of points
   * @param {Array} location to test
- * @return {Boolean} true  if is inside or false other case
+ * @returns {Boolean} true  if is inside or false other case
   */
-let containsLocation = function (polygon, location) {
-  let A1 = polygonArea(polygon)
-  let center = findCentroid(polygon)
-  let polygonTrans = transCoord(polygon, center)
-  let polygonRotate = rotateCoord(polygonTrans)
-  let locationTrans = transCoord([location], center)
-  let locationRotate = rotateCoord(locationTrans)
-  polygonRotate = ordenate(polygonRotate)
-  let _limit = limit(locationRotate[0], polygonRotate)
-  insertPoint(locationRotate[0], _limit, polygonRotate)
-  let A2 = polygonAreaRot(polygonRotate)
-  return (A2 <= A1)
-}
+const containsLocation = function(polygon, location) {
+    const A1 = polygonArea(polygon);
+    const center = findCentroid(polygon);
+    const polygonTrans = transCoord(polygon, center);
+    let polygonRotate = rotateCoord(polygonTrans);
+    const locationTrans = transCoord([ location ], center);
+    const locationRotate = rotateCoord(locationTrans);
+    polygonRotate = ordenate(polygonRotate);
+    const _limit = limit(locationRotate[0], polygonRotate);
+    insertPoint(locationRotate[0], _limit, polygonRotate);
+    const A2 = polygonAreaRot(polygonRotate);
+    return A2 <= A1;
+};
+
 /**
  * @function getArea
  * @param {Array} polygon
-* @return {Number} area overclosed by polygon
+* @returns {Number} area overclosed by polygon
  */
-let getArea= function (polygon) {
-  let center = findCentroid(polygon)
-  let polygonTrans = transCoord(polygon, center)
-  let polygonRotate = rotateCoord(polygonTrans)
-  polygonRotate = ordenate(polygonRotate)
-  let A2 = polygonAreaRot(polygonRotate)
-  return A2
-}
+const getArea = function(polygon) {
+    const center = findCentroid(polygon);
+    const polygonTrans = transCoord(polygon, center);
+    let polygonRotate = rotateCoord(polygonTrans);
+    polygonRotate = ordenate(polygonRotate);
+    const A2 = polygonAreaRot(polygonRotate);
+    return A2;
+};
+
 /**
  * @function invRotateCoord
  * @param {Array} polygon
-* @return {Array} polygon not Rotated
+* @returns {Array} polygon not Rotated
  */
-let invRotateCoord = function (points) {
-  let array = [],
-    r, x, y, theta
-  for (let i = 0; i < points.length; i++) {
-    r = points[i][0]
-    theta = points[i][1]
-    x = r*cos(theta)
-    y = r*sin(theta)
-    array[i] = [x, y]
-  }
-  return array
-}
+const invRotateCoord = function(points) {
+    let array = [],
+        r, x, y, theta;
+    for (let i = 0; i < points.length; i++) {
+        r = points[i][0];
+        theta = points[i][1];
+        x = r * cos(theta);
+        y = r * sin(theta);
+        array[i] = [ x, y ];
+    }
+    return array;
+};
+
 /**
  * @function getAreaSpherical
  * @param {Array} polygon
-* @return {Number} spherical area overclosed by polygon
+* @returns {Number} spherical area overclosed by polygon
  */
-let getAreaSpherical= function(polygon) {
-  var projectedPolygon = [],
-  l=polygon.length
-  for (var i = 0; i < l; i++) {
-    projectedPolygon[i]= stereographicProjection(
-      {latitude :polygon[i][0],longitude :polygon[i][1] },1)
-  }
-  let center = findCentroid(projectedPolygon)
-  let polygonTrans = transCoord(projectedPolygon, center)
-  let polygonRotate = rotateCoord(polygonTrans)
-  polygonRotate = ordenate(polygonRotate)
-  polygonRotate = invRotateCoord(polygonRotate)
-  polygonRotate= invTransCoord(polygonRotate, center)
-  let sphericalPolygon = []
-  for ( i = 0; i < l; i++) {
-    sphericalPolygon[i]=invStereographicProjection(polygonRotate[i])
-  }
-  i = l-1
-  var E=0,k,theta1,theta2 ,theta3 ,phi1,phi2 ,phi3,a,b,c,C
+const getAreaSpherical = function(polygon) {
+    let projectedPolygon = [],
+        l = polygon.length;
+    for (var i = 0; i < l; i++) {
+        projectedPolygon[i] = stereographicProjection(
+            { latitude :polygon[i][0], longitude :polygon[i][1] }, 1);
+    }
+    const center = findCentroid(projectedPolygon);
+    const polygonTrans = transCoord(projectedPolygon, center);
+    let polygonRotate = rotateCoord(polygonTrans);
+    polygonRotate = ordenate(polygonRotate);
+    polygonRotate = invRotateCoord(polygonRotate);
+    polygonRotate = invTransCoord(polygonRotate, center);
+    const sphericalPolygon = [];
+    for (i = 0; i < l; i++) {
+        sphericalPolygon[i] = invStereographicProjection(polygonRotate[i]);
+    }
+    i = l - 1;
+    let E = 0, k, theta1, theta2, theta3, phi1, phi2, phi3, a, b, c, C;
 
-  for ( var j = 0; j < l; j++) {
-    k=(j+1)%l
-    phi1 = sphericalPolygon[i][0]/180*pi
-    theta1 = sphericalPolygon[i][1]/180*pi
-    phi2 = sphericalPolygon[j][0]/180*pi
-    theta2 = sphericalPolygon[j][1]/180*pi
-    phi3 = sphericalPolygon[k][0]/180*pi
-    theta3 = sphericalPolygon[k][1]/180*pi
-    a =cos(theta1)*cos(theta2)+sin(theta1)*sin(theta2)*cos(phi1 - phi2)
-    b=cos(theta3)*cos(theta2)+sin(theta3)*sin(theta2)*cos(phi3 - phi2)
-    c=cos(theta3)*cos(theta1)+sin(theta3)*sin(theta1)*cos(phi3 - phi1)
-    C = Math.acos( (cos(c)-cos(a)*cos(b))/sin(a)/sin(b))
-    E= E+C
-    i=j
-  }
-  E = E-(l-2)*pi
-  return E*earthR*earthR
-}
+    for (let j = 0; j < l; j++) {
+        k = (j + 1) % l;
+        phi1 = sphericalPolygon[i][0] / 180 * pi;
+        theta1 = sphericalPolygon[i][1] / 180 * pi;
+        phi2 = sphericalPolygon[j][0] / 180 * pi;
+        theta2 = sphericalPolygon[j][1] / 180 * pi;
+        phi3 = sphericalPolygon[k][0] / 180 * pi;
+        theta3 = sphericalPolygon[k][1] / 180 * pi;
+        a = cos(theta1) * cos(theta2) + sin(theta1) * sin(theta2) * cos(phi1 - phi2);
+        b = cos(theta3) * cos(theta2) + sin(theta3) * sin(theta2) * cos(phi3 - phi2);
+        c = cos(theta3) * cos(theta1) + sin(theta3) * sin(theta1) * cos(phi3 - phi1);
+        C = Math.acos((cos(c) - cos(a) * cos(b)) / sin(a) / sin(b));
+        E = E + C;
+        i = j;
+    }
+    E = E - (l - 2) * pi;
+    return E * earthR * earthR;
+};
 
 module.exports = {
 
-  containsLocation: containsLocation,
-  getArea: getArea,
-  getDistance:  getDistance,
-  getAreaSpherical :getAreaSpherical
+    containsLocation,
+    getArea,
+    getDistance,
+    getAreaSpherical
 
-}
+};
