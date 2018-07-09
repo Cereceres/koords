@@ -1,4 +1,4 @@
-'use strict';
+const findCentroid = require('./lib/find-centroid');
 
 const pi = Math.PI;
 const halfPi = pi / 2;
@@ -8,24 +8,6 @@ const sin = Math.sin;
 const sqrt = Math.sqrt;
 require('./truncate')();
 
-/**
-* @function findCentroid
- * Returns poligon center
- * @param points {Array} - Polygon points
- * @returns {Array} - Center [x, y]
- */
-const findCentroid = function(points) {
-    let x = 0,
-        y = 0,
-        l = points.length;
-    for (let i = 0; i < l; i++) {
-        x = x + points[i][0];
-        y = y + points[i][1];
-    }
-    x = x / l;
-    y = y / l;
-    return [ x, y ];
-};
 
 /**
 * @function transCoord
@@ -101,12 +83,12 @@ const rotateCoord = function(points) {
 };
 
 /**
-* @function ordenate
+* @function sortByOrdinate
  * Sorts the polygon points
  * @param points {Array} - Polygon points
  * @returns {Array} - Sorted poygon
  */
-const ordenate = function(points) {
+const sortByOrdinate = function(points) {
     let minor;
     for (let i = 1; i < points.length; i++) {
         for (let j = i; j > 0; j--) {
@@ -321,12 +303,14 @@ function invStereographicProjection(point) {
   */
 const containsLocation = function(polygon, location) {
     const A1 = polygonArea(polygon);
+    console.log('A1 ', A1);
     const center = findCentroid(polygon);
+    console.log('center ', center);
     const polygonTrans = transCoord(polygon, center);
     let polygonRotate = rotateCoord(polygonTrans);
     const locationTrans = transCoord([ location ], center);
     const locationRotate = rotateCoord(locationTrans);
-    polygonRotate = ordenate(polygonRotate);
+    polygonRotate = sortByOrdinate(polygonRotate);
     const _limit = limit(locationRotate[0], polygonRotate);
     insertPoint(locationRotate[0], _limit, polygonRotate);
     const A2 = polygonAreaRot(polygonRotate);
@@ -342,7 +326,7 @@ const getArea = function(polygon) {
     const center = findCentroid(polygon);
     const polygonTrans = transCoord(polygon, center);
     let polygonRotate = rotateCoord(polygonTrans);
-    polygonRotate = ordenate(polygonRotate);
+    polygonRotate = sortByOrdinate(polygonRotate);
     const A2 = polygonAreaRot(polygonRotate);
     return A2;
 };
@@ -380,7 +364,7 @@ const getAreaSpherical = function(polygon) {
     const center = findCentroid(projectedPolygon);
     const polygonTrans = transCoord(projectedPolygon, center);
     let polygonRotate = rotateCoord(polygonTrans);
-    polygonRotate = ordenate(polygonRotate);
+    polygonRotate = sortByOrdinate(polygonRotate);
     polygonRotate = invRotateCoord(polygonRotate);
     polygonRotate = invTransCoord(polygonRotate, center);
     const sphericalPolygon = [];
@@ -410,7 +394,6 @@ const getAreaSpherical = function(polygon) {
 };
 
 module.exports = {
-
     containsLocation,
     getArea,
     getDistance,

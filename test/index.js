@@ -3,7 +3,11 @@
 const koords = require('../index');
 const assert = require('assert');
 require('../truncate')();
-
+const messagePermutationsTest = `Consistency under permutations of points:
+Program should trigger a warning if polygon is not simple.
+If application  sorts vertices, points [[0,1/2],[1/2,0],[-1/2,0],[0,-1/2]]
+  must be in the polygons formed by all permutations of the points
+[[1, 1], [-1, 1], [-1, -1], [1, -1]]]`;
 describe('Koords', () => {
     it('Should contains location (inside)', (done) => {
         const isPointInside = koords.containsLocation([
@@ -54,48 +58,32 @@ describe('Koords', () => {
         done();
     });
 
-    it('The spherical area of a polygon with vertices: [0,0],[10,0],[10,10]',
-        (done) => {
-            const area = koords.getAreaSpherical([ [ 0, 0 ], [ 10, 0 ], [ 10, 10 ] ]).truncate(2);
-            assert(area === 19649731.09);
-            done();
-        });
+    it('The spherical area of a polygon with vertices: [0,0],[10,0],[10,10]', () => {
+        const area = koords.getAreaSpherical([ [ 0, 0 ], [ 10, 0 ], [ 10, 10 ] ]).truncate(2);
+        assert(area === 19649731.09);
+    });
 
 
-             const messagePermutationsTest= 'Consistency under permutations of points: '
-                                   +   'Program should trigger a warning if polygon is not simple.\n'
-                                 + 'If application  sorts vertices, points [[0,1/2],[1/2,0],[-1/2,0],[0,-1/2]] \n'
-                                  +'  must be in the polygons formed by all permutations of the points '
-                                  +'[[1, 1], [-1, 1], [-1, -1], [1, 1]]]';
-
-
-           it (messagePermutationsTest, function(){
-
-
-             const points=[[0,1/2],[1/2,0],[-1/2,0],[0,-1/2]];
-
-             const permutations =[[[1, 1], [-1, 1], [-1, -1], [1, 1]], [[1, 1], [-1, 1], [1,
-          1], [-1, -1]], [[1, 1], [-1, -1], [-1, 1], [1, 1]], [[1,
-          1], [-1, -1], [1, 1], [-1, 1]], [[1, 1], [1, 1], [-1,
-          1], [-1, -1]], [[1, 1], [1, 1], [-1, -1], [-1, 1]], [[-1, 1], [1,
-          1], [-1, -1], [1, 1]], [[-1, 1], [1, 1], [1, 1], [-1, -1]], [[-1,
-          1], [-1, -1], [1, 1], [1, 1]], [[-1, -1], [1, 1], [-1, 1], [1,
-          1]], [[-1, -1], [1, 1], [1, 1], [-1, 1]], [[-1, -1], [-1, 1], [1,
-          1], [1, 1]]];
-
-            function queryOnePointInAllPermutations(point){
-
-                 const arrayOfContainsLocation =  permutations.map(x=> koords.containsLocation(x,point));
-
-                 return  arrayOfContainsLocation.every(x => x)
-
-            };
-
-             const queryAllPointsContained = points.every(queryOnePointInAllPermutations);
-
-               assert.equal(queryAllPointsContained, true);
-               done();
-             }  );
-
-
+    it(messagePermutationsTest, () => {
+        const points = [ [ 0, 1 / 2 ], [ 1 / 2, 0 ], [ -1 / 2, 0 ], [ 0, -1 / 2 ] ];
+        const permutations = [
+            [ [ 1, 1 ], [ -1, 1 ], [ -1, -1 ], [ 1, 1 ] ],
+            [ [ 1, 1 ], [ -1, 1 ], [ 1, 1 ], [ -1, -1 ] ],
+            [ [ 1, 1 ], [ -1, -1 ], [ -1, 1 ], [ 1, 1 ] ],
+            [ [ 1, 1 ], [ -1, -1 ], [ 1, 1 ], [ -1, 1 ] ],
+            [ [ 1, 1 ], [ 1, 1 ], [ -1, 1 ], [ -1, -1 ] ],
+            [ [ 1, 1 ], [ 1, 1 ], [ -1, -1 ], [ -1, 1 ] ],
+            [ [ -1, 1 ], [ 1, 1 ], [ -1, -1 ], [ 1, 1 ] ],
+            [ [ -1, 1 ], [ 1, 1 ], [ 1, 1 ], [ -1, -1 ] ],
+            [ [ -1, 1 ], [ -1, -1 ], [ 1, 1 ], [ 1, 1 ] ],
+            [ [ -1, -1 ], [ 1, 1 ], [ -1, 1 ], [ 1, 1 ] ],
+            [ [ -1, -1 ], [ 1, 1 ], [ 1, 1 ], [ -1, 1 ] ],
+            [ [ -1, -1 ], [ -1, 1 ], [ 1, 1 ], [ 1, 1 ] ]
+        ];
+        const queryOnePointInAllPermutations = (point) => permutations
+            .map((permutation) => koords.containsLocation(permutation, point))
+            .every((result) => result);
+        const queryAllPointsContained = points.every(queryOnePointInAllPermutations);
+        assert.equal(queryAllPointsContained, true);
+    });
 });
