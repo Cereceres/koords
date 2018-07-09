@@ -48,7 +48,7 @@ describe('Koords', () => {
         done();
     });
 
-    it('The distance from ecuador to polo is 40.007.161/4', (done) => {
+    it('Distance from ecuador to pole is 40.007.161/4', (done) => {
         const distance = koords.getDistance({ latitude : 0, longitude:0 }, { latitude:90, longitude:0 });
         assert.equal(distance, 10007.543398010284);
         done();
@@ -60,4 +60,42 @@ describe('Koords', () => {
             assert(area === 19649731.09);
             done();
         });
+
+
+             const messagePermutationsTest= 'Consistency under permutations of points: '
+                                   +   'Program should trigger a warning if polygon is not simple.\n'
+                                 + 'If application  sorts vertices, points [[0,1/2],[1/2,0],[-1/2,0],[0,-1/2]] \n'
+                                  +'  must be in the polygons formed by all permutations of the points '
+                                  +'[[1, 1], [-1, 1], [-1, -1], [1, 1]]]';
+
+
+           it (messagePermutationsTest, function(){
+
+
+             const points=[[0,1/2],[1/2,0],[-1/2,0],[0,-1/2]];
+
+             const permutations =[[[1, 1], [-1, 1], [-1, -1], [1, 1]], [[1, 1], [-1, 1], [1,
+          1], [-1, -1]], [[1, 1], [-1, -1], [-1, 1], [1, 1]], [[1,
+          1], [-1, -1], [1, 1], [-1, 1]], [[1, 1], [1, 1], [-1,
+          1], [-1, -1]], [[1, 1], [1, 1], [-1, -1], [-1, 1]], [[-1, 1], [1,
+          1], [-1, -1], [1, 1]], [[-1, 1], [1, 1], [1, 1], [-1, -1]], [[-1,
+          1], [-1, -1], [1, 1], [1, 1]], [[-1, -1], [1, 1], [-1, 1], [1,
+          1]], [[-1, -1], [1, 1], [1, 1], [-1, 1]], [[-1, -1], [-1, 1], [1,
+          1], [1, 1]]];
+
+            function queryOnePointInAllPermutations(point){
+
+                 const arrayOfContainsLocation =  permutations.map(x=> koords.containsLocation(x,point));
+
+                 return  arrayOfContainsLocation.every(x => x)
+
+            };
+
+             const queryAllPointsContained = points.every(queryOnePointInAllPermutations);
+
+               assert.equal(queryAllPointsContained, true);
+               done();
+             }  );
+
+
 });
