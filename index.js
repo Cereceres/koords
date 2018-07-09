@@ -1,5 +1,3 @@
-'use strict';
-
 const pi = Math.PI;
 const pi2 = pi / 2;
 const earthR = 6371;
@@ -410,7 +408,6 @@ const getAreaSpherical = function(polygon) {
 };
 
 module.exports = {
-
     containsLocation,
     getArea,
     getDistance,
