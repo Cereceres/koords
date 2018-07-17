@@ -164,11 +164,12 @@ function invStereographicProjection(point) {
  * @returns {Boolean} true  if is inside or false other case
   */
 const containsLocation = function(polygon, location) {
-    const A1 = polygonArea(polygon);
-    console.log('A1 ', A1);
-    const center = findCentroid(polygon);
-    console.log('center ', center);
-    const polygonTrans = transCoord(polygon, center);
+    const  orderedPolygon = sortByOrdinate(polygon);
+    const A1 = polygonArea(orderedPolygon);
+  //console.log('A1 ', A1);
+    const center = findCentroid(orderedPolygon);
+    //console.log('center ', center);
+    const polygonTrans = transCoord(orderedPolygon, center);
     let polygonRotate = rotateCoord(polygonTrans);
     const locationTrans = transCoord([ location ], center);
     const locationRotate = rotateCoord(locationTrans);
