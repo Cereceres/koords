@@ -2,12 +2,15 @@
 
 const koords = require('../index');
 const assert = require('assert');
+const sortByOrdinate = require('../lib/sort-by-ordinate');
+const permutations=require('./permutations')();
+
 require('../truncate')();
-const messagePermutationsTest = `Consistency under permutations of points:
-Program should trigger a warning if polygon is not simple.
-If application  sorts vertices, points [[0,1/2],[1/2,0],[-1/2,0],[0,-1/2]]
-  must be in the polygons formed by all permutations of the points
-[[1, 1], [-1, 1], [-1, -1], [1, -1]]]`;
+const messagePermutationsTest = `Consistency under permutations of points.
+             If application  sorts vertices, points [[0,1/4],[1/4,0],[-1/4,0],[0,-1/4]]
+          must be in the polygons formed by all permutations of the points
+                  [[3/2, 3/2], [-1, 1], [-(3/2), -(3/2)], [1, 0]]`;
+
 describe('Koords', () => {
     it('Should contains location (inside)', (done) => {
         const isPointInside = koords.containsLocation([
@@ -65,25 +68,15 @@ describe('Koords', () => {
 
 
     it(messagePermutationsTest, () => {
-        const points = [ [ 0, 1 / 2 ], [ 1 / 2, 0 ], [ -1 / 2, 0 ], [ 0, -1 / 2 ] ];
-        const permutations = [
-            [ [ 1, 1 ], [ -1, 1 ], [ -1, -1 ], [ 1, 1 ] ],
-            [ [ 1, 1 ], [ -1, 1 ], [ 1, 1 ], [ -1, -1 ] ],
-            [ [ 1, 1 ], [ -1, -1 ], [ -1, 1 ], [ 1, 1 ] ],
-            [ [ 1, 1 ], [ -1, -1 ], [ 1, 1 ], [ -1, 1 ] ],
-            [ [ 1, 1 ], [ 1, 1 ], [ -1, 1 ], [ -1, -1 ] ],
-            [ [ 1, 1 ], [ 1, 1 ], [ -1, -1 ], [ -1, 1 ] ],
-            [ [ -1, 1 ], [ 1, 1 ], [ -1, -1 ], [ 1, 1 ] ],
-            [ [ -1, 1 ], [ 1, 1 ], [ 1, 1 ], [ -1, -1 ] ],
-            [ [ -1, 1 ], [ -1, -1 ], [ 1, 1 ], [ 1, 1 ] ],
-            [ [ -1, -1 ], [ 1, 1 ], [ -1, 1 ], [ 1, 1 ] ],
-            [ [ -1, -1 ], [ 1, 1 ], [ 1, 1 ], [ -1, 1 ] ],
-            [ [ -1, -1 ], [ -1, 1 ], [ 1, 1 ], [ 1, 1 ] ]
-        ];
+        const points = [ [ 0, 1/4 ], [ 1/4, 0 ],[ 0, -1/4 ], [ -1/4 , 0 ] ];
         const queryOnePointInAllPermutations = (point) => permutations
             .map((permutation) => koords.containsLocation(permutation, point))
             .every((result) => result);
+
         const queryAllPointsContained = points.every(queryOnePointInAllPermutations);
-        assert.equal(queryAllPointsContained, true);
+        assert( queryAllPointsContained ===true);
     });
+
+
+
 });
