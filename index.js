@@ -1,4 +1,14 @@
-'use strict';
+const findCentroid = require('./lib/find-centroid');
+const transCoord = require('./lib/trans-coord');
+const invTransCoord = require('./lib/inv-trans-coord');
+const sortByOrdinate = require('./lib/sort-by-ordinate');
+const haversine = require('./lib/sines').haversine;
+const ahaversine = require('./lib/sines').ahaversine;
+const atan = require('./lib/atan');
+const polygonArea = require('./lib/polygon-area');
+const limit = require('./lib/limit');
+const invSphericalCoords=require('./lib/inv-spherical-coords');
+
 
 const pi = Math.PI;
 const halfPi = pi / 2;
@@ -9,6 +19,7 @@ const sqrt = Math.sqrt;
 require('./truncate')();
 
 /**
+
 * @function findCentroid
  * Returns poligon center
  * @param points {Array} - Polygon points
@@ -65,6 +76,7 @@ const invTransCoord = function(points, center) {
     return array;
 };
 
+
 /**
 * @function atan
  * atan function
@@ -83,6 +95,7 @@ const atan = function(x, y) {
 
 /**
 * @function rotateCoord
+
  *  Rotates points of polygon
  * @param points {Array} - Polygon points
  * @returns {Array} - Rotated poygon
@@ -93,53 +106,13 @@ const rotateCoord = function(points) {
     for (let i = 0; i < points.length; i++) {
         x = points[i][0];
         y = points[i][1];
-        r = sqrt(x * x + y * y);
+        r = Math.sqrt(x * x + y * y);
         theta = atan(x, y);
         array[i] = [ r, theta ];
     }
     return array;
 };
 
-/**
-* @function ordenate
- * Sorts the polygon points
- * @param points {Array} - Polygon points
- * @returns {Array} - Sorted poygon
- */
-const ordenate = function(points) {
-    let minor;
-    for (let i = 1; i < points.length; i++) {
-        for (let j = i; j > 0; j--) {
-            if (points[j][1] < points[j - 1][1]) {
-                minor = points[j];
-                points[j] = points[j - 1];
-                points[j - 1] = minor;
-            } else {
-                break;
-            }
-        }
-    }
-    return points;
-};
-
-/**
-* @function limit
- * Returns position for the new pont
- * @param points {Array} - Polygon points
- * @param array {Array} - New Point
- * @returns {Number} - Position of new point
- */
-const limit = function(point, array) {
-    let i;
-    const theta = point[1];
-    for (i = 0; i < array.length; i++) {
-        const theta1 = array[i][1];
-        if (theta <= theta1) {
-            return i;
-        }
-    }
-    return i;
-};
 
 /**
 * @function insertPoint
@@ -153,21 +126,6 @@ const insertPoint = function(point, index, points) {
     return points.splice(index, 0, point);
 };
 
-/**
-* @function polygonArea
- * Calcs the plane area of polygon
- * @param points {Array} - Polygon points
- * @returns {Number} - Poligon area
- */
-const polygonArea = function(points) {
-    let area = 0; // Accumulates area in the loop
-    let j = points.length - 1; // The last vertex is the 'previous' one to the first
-    for (let i = 0; i < points.length; i++) {
-        area = area + (points[j][0] + points[i][0]) * (points[j][1] - points[i][1]);
-        j = i; // j is previous vertex to i
-    }
-    return Math.abs(area / 2);
-};
 
 /**
 * @function polygonAreaRot
@@ -193,27 +151,6 @@ const polygonAreaRot = function(points) {
     }
     return Math.abs(area / 2);
 };
-
-/**
-* @function haversine
- * Haversine function
- * @param {Number} theta
- * @returns {Number} - Haversine(theta)
- */
-function haversine(theta) {
-    return Math.pow(sin(theta / 2), 2);
-}
-
-/**
-* @function ahaversine
- * Haversine inverse function
- * @param {Number} theta
- * @returns {Number} - Haversine(theta)
- */
-function ahaversine(x) {
-    return 2 * Math.asin(sqrt(x));
-}
-
 /**
  * @function getDistance
  * Get the distance between two points over a spherical surface.
@@ -258,27 +195,10 @@ getDistance.toMiles = function(point1, point2) {
  * @returns {Array} - the cartesian coords
  */
 function sphericalCoords(theta, phi, radius) {
-    let x = radius * sin(theta) * cos(phi),
-        y = radius * sin(theta) * sin(phi),
-        z = radius * cos(theta);
+    let x = radius * Math.sin(theta) * Math.cos(phi),
+        y = radius * Math.sin(theta) * Math.sin(phi),
+        z = radius * Math.cos(theta);
     return [ x, y, z ];
-}
-
-/**
-* @function invSphericalCoords
- * Get the spherical coords from cartesian coords
- * @param {Number} theta
- * @param {Number} phi
- * @param {Number} radius
- * @returns {Array} - the spherical coords
- */
-function invSphericalCoords(point) {
-    let x = point[0], y = point[1], z = point[2];
-    let R = sqrt(x * x + y * y + z * z),
-        rho = sqrt(x * x + y * y),
-        theta = Math.acos(z / R) / pi * 180,
-        phi = (Math.acos(x / rho) + (1 - Math.sign(x)) / 2 * pi) / pi * 180;
-    return [ theta, phi ];
 }
 
 /**
@@ -320,13 +240,16 @@ function invStereographicProjection(point) {
  * @returns {Boolean} true  if is inside or false other case
   */
 const containsLocation = function(polygon, location) {
-    const A1 = polygonArea(polygon);
-    const center = findCentroid(polygon);
-    const polygonTrans = transCoord(polygon, center);
+    const  orderedPolygon = sortByOrdinate(polygon);
+    const A1 = polygonArea(orderedPolygon);
+  //console.log('A1 ', A1);
+    const center = findCentroid(orderedPolygon);
+    //console.log('center ', center);
+    const polygonTrans = transCoord(orderedPolygon, center);
     let polygonRotate = rotateCoord(polygonTrans);
     const locationTrans = transCoord([ location ], center);
     const locationRotate = rotateCoord(locationTrans);
-    polygonRotate = ordenate(polygonRotate);
+    polygonRotate = sortByOrdinate(polygonRotate);
     const _limit = limit(locationRotate[0], polygonRotate);
     insertPoint(locationRotate[0], _limit, polygonRotate);
     const A2 = polygonAreaRot(polygonRotate);
@@ -342,7 +265,7 @@ const getArea = function(polygon) {
     const center = findCentroid(polygon);
     const polygonTrans = transCoord(polygon, center);
     let polygonRotate = rotateCoord(polygonTrans);
-    polygonRotate = ordenate(polygonRotate);
+    polygonRotate = sortByOrdinate(polygonRotate);
     const A2 = polygonAreaRot(polygonRotate);
     return A2;
 };
@@ -380,7 +303,7 @@ const getAreaSpherical = function(polygon) {
     const center = findCentroid(projectedPolygon);
     const polygonTrans = transCoord(projectedPolygon, center);
     let polygonRotate = rotateCoord(polygonTrans);
-    polygonRotate = ordenate(polygonRotate);
+    polygonRotate = sortByOrdinate(polygonRotate);
     polygonRotate = invRotateCoord(polygonRotate);
     polygonRotate = invTransCoord(polygonRotate, center);
     const sphericalPolygon = [];
@@ -410,7 +333,8 @@ const getAreaSpherical = function(polygon) {
 };
 
 module.exports = {
-
+  stereographicProjection,
+    rotateCoord,
     containsLocation,
     getArea,
     getDistance,
