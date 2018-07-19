@@ -4,7 +4,7 @@
   "description": "Library to provide some basic geo functions",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha test/index"
+    "test": "mocha || true"
   },
   "keywords": [
     "geo",
@@ -16,6 +16,10 @@
   "author": "@Cereceres",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "^2.3.4"
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "npm": "^6.1.0"
   }
 }

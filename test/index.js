@@ -2,7 +2,6 @@
 
 const koords = require('../index');
 const assert = require('assert');
-const sortByOrdinate = require('../lib/sort-by-ordinate');
 const permutations=require('./permutations')();
 
 require('../truncate')();
