@@ -7,7 +7,7 @@ const ahaversine = require('./lib/sines').ahaversine;
 const atan = require('./lib/atan');
 const getPolygonArea = require('./lib/polygon-area');
 const getNewPointPosition = require('./lib/new-point-position');
-const fromCartesianToSpherical=require('./lib/inv-spherical-coords');
+const fromCartesianToSpherical = require('./lib/inv-spherical-coords');
 const getPolygonAreaRot = require('./lib/polygon-area-rot');
 
 require('./truncate')();
@@ -19,31 +19,12 @@ require('./truncate')();
  * @returns {Array} - Rotated poygon
  */
 
-const polarCoordinates = (CartesianPointsXandY) => CartesianPointsXandY.map(
-                                                        (xAndY) => [Math.sqrt(xAndY[0]**2 + xAndY[1]**2), //Polar Radius coord
-                                                                       atan(xAndY[0],xAndY[1]) //Polar Angle coord
-                                                                      ]);
+const polarCoordinates = (CartesianPointsXandY) => CartesianPointsXandY
+    .map((xAndY) => [
+        Math.sqrt(xAndY[0] ** 2 + xAndY[1] ** 2), // Polar Radius coord
+        atan(xAndY[0], xAndY[1]) // Polar Angle coord
+    ]);
 
-
-
-/*
-const polarCoordinates = function(points) {
-      let pointspolar = [];
-
-     const polarCoordinate= {};
-     const cartesianCoordinate= {};
-
-    for (let i = 0; i < points.length; i++) {
-      cartesianCoordinate.x  = points[i][0];
-      cartesianCoordinate.y = points[i][1];
-      polarCoordinate.radius = Math.sqrt(cartesianCoordinate.x**2
-                                           + cartesianCoordinate.y**2);
-      polarCoordinate.angle = atan(cartesianCoordinate.x,cartesianCoordinate.y);
-      pointspolar[i] = Object.values(polarCoordinate);
-    }
-    return pointspolar;
-};
-*/
 
 /**
 * @function insertPoint
@@ -53,12 +34,7 @@ const polarCoordinates = function(points) {
  * @param points {Array} - Polygon points
  * @returns {Array} - New polygon
  */
-const insertPoint = function(point, index, points) {
-    return points.splice(index, 0, point);
-};
-
-
-
+const insertPoint = (point, index, points) => points.splice(index, 0, point);
 
 
 /**
@@ -69,8 +45,7 @@ const insertPoint = function(point, index, points) {
  * @returns {Number} - Spherical distance
  */
 const getDistance = function(point1, point2) {
-
-   let  phi1 = point1.latitude / 180 * Math.PI,
+    let phi1 = point1.latitude / 180 * Math.PI,
         phi2 = point2.latitude / 180 * Math.PI,
         lambdpolygonArea = point1.longitude / 180 * Math.PI,
         lambda2 = point2.longitude / 180 * Math.PI;
@@ -89,7 +64,7 @@ const getDistance = function(point1, point2) {
  * @returns {Number} - Spherical distance
  */
 getDistance.toMiles = function(point1, point2) {
-    const  earthRadius = 6371;
+    const earthRadius = 6371;
     let phi1 = point1.latitude / 180 * pi,
         phi2 = point2.latitude / 180 * pi,
         lambdpolygonArea = point1.longitude / 180 * pi,
@@ -108,11 +83,11 @@ getDistance.toMiles = function(point1, point2) {
  * @returns {Array} - the cartesian coords
  */
 function fromSphericalToCartesian(theta, phi, radius) {
-    const cartesian={};
-       cartesian.x = radius * Math.sin(theta) * Math.cos(phi),
-       cartesian.y = radius * Math.sin(theta) * Math.sin(phi),
-       cartesian.z = radius * Math.cos(theta);
-    return  Object.values(cartesian);
+    const cartesian = {};
+    cartesian.x = radius * Math.sin(theta) * Math.cos(phi),
+    cartesian.y = radius * Math.sin(theta) * Math.sin(phi),
+    cartesian.z = radius * Math.cos(theta);
+    return Object.values(cartesian);
 }
 
 /**
@@ -123,20 +98,19 @@ function fromSphericalToCartesian(theta, phi, radius) {
  * @returns {Array} - the plane coords
  */
 function stereographicProjection(point, radius) {
-
-    const sphericalAngles={};
+    const sphericalAngles = {};
     const cartesian = {};
-    const pointProjected={};
+    const pointProjected = {};
 
 
-     sphericalAngles.theta = Math.PI/2 - point.latitude / 180 * Math.PI;
-     sphericalAngles.phi = point.longitude / 180 * Math.PI;
+    sphericalAngles.theta = Math.PI / 2 - point.latitude / 180 * Math.PI;
+    sphericalAngles.phi = point.longitude / 180 * Math.PI;
 
     [ cartesian.x, cartesian.y, cartesian.z ] =
-                     fromSphericalToCartesian(sphericalAngles.theta,sphericalAngles.phi,radius);
+                     fromSphericalToCartesian(sphericalAngles.theta, sphericalAngles.phi, radius);
 
-     pointProjected.X = 2 * cartesian.x / (1 + cartesian.z);
-     pointProjected.Y = 2 * cartesian.y / (1 + cartesian.z);
+    pointProjected.X = 2 * cartesian.x / (1 + cartesian.z);
+    pointProjected.Y = 2 * cartesian.y / (1 + cartesian.z);
 
     return Object.values(pointProjected);
 }
@@ -149,23 +123,22 @@ function stereographicProjection(point, radius) {
  * @returns {Array} - the spherical coords
  */
 function invStereographicProjection(point) {
+    const stereographic = {};
+    const cartesian = {};
+    const sphericalAngles = {};
 
-    const stereographic={};
-    const cartesian={};
-    const sphericalAngles={};
+    stereographic.X = point[0];
+    stereographic.Y = point[1];
 
-          stereographic.X = point[0];
-          stereographic.Y = point[1];
+    cartesian.x = 4 * stereographic.X / (4 + stereographic.X ** 2 + stereographic.Y ** 2);
+    cartesian.y = 4 * stereographic.Y / (4 + stereographic.X ** 2 + stereographic.Y ** 2);
+    cartesian.z = 8 / (4 + stereographic.X ** 2 + stereographic.Y ** 2) - 1;
 
-          cartesian.x  = 4 * stereographic.X / (4 + stereographic.X**2 + stereographic.Y**2);
-          cartesian.y  = 4 * stereographic.Y / (4 + stereographic.X**2 + stereographic.Y**2);
-          cartesian.z  = 8 / (4 + stereographic.X**2 + stereographic.Y**2) - 1;
-
-   [sphericalAngles.theta,sphericalAngles.phi] = fromCartesianToSpherical(Object.values(cartesian));
+    [ sphericalAngles.theta, sphericalAngles.phi ] = fromCartesianToSpherical(Object.values(cartesian));
 
     sphericalAngles.theta = 90 - sphericalAngles.theta;
 
-    return [sphericalAngles.theta, sphericalAngles.phi];
+    return [ sphericalAngles.theta, sphericalAngles.phi ];
 }
 
 /**
@@ -175,11 +148,11 @@ function invStereographicProjection(point) {
  * @returns {Boolean} true  if is inside or false other case
   */
 const containsLocation = function(polygon, location) {
-    const  orderedPolygon = sortCounterclockwise(polygon);
+    const orderedPolygon = sortCounterclockwise(polygon);
     const polygonArea = getPolygonArea(orderedPolygon);
-  //console.log('polygonArea ', polygonArea);
+    // console.log('polygonArea ', polygonArea);
     const center = findCentroid(orderedPolygon);
-    //console.log('center ', center);
+    // console.log('center ', center);
     const polygonTrans = transCoord(orderedPolygon, center);
     let polygonRotate = polarCoordinates(polygonTrans);
     const locationTrans = transCoord([ location ], center);
@@ -210,10 +183,10 @@ const getArea = function(polygon) {
  * @param {Array} polygon
 * @returns {Array} polygon not Rotated
  */
-const fromPolarToCartesian = (pointsPolarFormRadiusAndAngle)=> pointsPolarFormRadiusAndAngle.map(
-                                     (rAndPhi) => [ rAndPhi[0]* Math.cos(rAndPhi[1]), // Cartesian X coord
-                                                    rAndPhi[0]* Math.sin(rAndPhi[1]) // Cartesian Y coord
-                                                  ]);
+const fromPolarToCartesian = (pointsPolarFormRadiusAndAngle) => pointsPolarFormRadiusAndAngle.map(
+    (rAndPhi) => [ rAndPhi[0] * Math.cos(rAndPhi[1]), // Cartesian X coord
+        rAndPhi[0] * Math.sin(rAndPhi[1]) // Cartesian Y coord
+    ]);
 
 /*
 const fromPolarToCartesian = function(pointsPolarForm) {
@@ -241,7 +214,6 @@ const fromPolarToCartesian = function(pointsPolarForm) {
 * @returns {Number} spherical area overclosed by polygon
  */
 const getAreaSpherical = function(polygon) {
-
     const earthRadius = 6371;
     let projectedPolygon = [],
         l = polygon.length;
@@ -270,12 +242,12 @@ const getAreaSpherical = function(polygon) {
         theta2 = sphericalPolygon[j][1] / 180 * Math.PI;
         phi3 = sphericalPolygon[k][0] / 180 * Math.PI;
         theta3 = sphericalPolygon[k][1] / 180 * Math.PI;
-        a = Math.cos(thetpolygonArea) * Math.cos(theta2)
-           + Math.sin(thetpolygonArea) * Math.sin(theta2) * Math.cos(phi1 - phi2);
-        b = Math.cos(theta3) * Math.cos(theta2)
-           + Math.sin(theta3) * Math.sin(theta2) * Math.cos(phi3 - phi2);
-        c = Math.cos(theta3) * Math.cos(thetpolygonArea)
-           + Math.sin(theta3) * Math.sin(thetpolygonArea) * Math.cos(phi3 - phi1);
+        a = Math.cos(thetpolygonArea) * Math.cos(theta2) +
+           Math.sin(thetpolygonArea) * Math.sin(theta2) * Math.cos(phi1 - phi2);
+        b = Math.cos(theta3) * Math.cos(theta2) +
+           Math.sin(theta3) * Math.sin(theta2) * Math.cos(phi3 - phi2);
+        c = Math.cos(theta3) * Math.cos(thetpolygonArea) +
+           Math.sin(theta3) * Math.sin(thetpolygonArea) * Math.cos(phi3 - phi1);
         C = Math.acos((Math.cos(c) - Math.cos(a) * Math.cos(b)) / Math.sin(a) / Math.sin(b));
         E = E + C;
         i = j;
@@ -285,7 +257,7 @@ const getAreaSpherical = function(polygon) {
 };
 
 module.exports = {
-  stereographicProjection,
+    stereographicProjection,
     polarCoordinates,
     containsLocation,
     getArea,

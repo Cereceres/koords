@@ -2,7 +2,7 @@
 
 const koords = require('../index');
 const assert = require('assert');
-const permutations=require('./permutations')();
+const permutations = require('./permutations')();
 
 require('../truncate')();
 const messagePermutationsTest = `Consistency under permutations of points.
@@ -67,15 +67,12 @@ describe('Koords', () => {
 
 
     it(messagePermutationsTest, () => {
-        const points = [ [ 0, 1/4 ], [ 1/4, 0 ],[ 0, -1/4 ], [ -1/4 , 0 ] ];
+        const points = [ [ 0, 1 / 4 ], [ 1 / 4, 0 ], [ 0, -1 / 4 ], [ -1 / 4, 0 ] ];
         const queryOnePointInAllPermutations = (point) => permutations
             .map((permutation) => koords.containsLocation(permutation, point))
             .every((result) => result);
 
         const queryAllPointsContained = points.every(queryOnePointInAllPermutations);
-        assert( queryAllPointsContained ===true);
+        assert(queryAllPointsContained === true);
     });
-
-
-
 });
