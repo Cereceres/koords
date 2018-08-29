@@ -1,5 +1,5 @@
 const pi = Math.PI;
-const pi2 = pi / 2;
+const halfPi = pi / 2;
 const earthR = 6371;
 const cos = Math.cos;
 const sin = Math.sin;
@@ -76,7 +76,7 @@ const atan = function(x, y) {
         return Math.atan(y / x) + pi * (1 - sign) / 2;
     }
     const sign = Math.sign(y);
-    return pi2 * (sign + 1) / 2 + (1 - sign) / 2 * 3 * pi2;
+    return halfPi * (sign + 1) / 2 + (1 - sign) / 2 * 3 * halfPi;
 };
 
 /**
@@ -287,7 +287,7 @@ function invSphericalCoords(point) {
  * @returns {Array} - the plane coords
  */
 function stereographicProjection(point, radius) {
-    let theta = pi2 - point.latitude / 180 * pi,
+    let theta = halfPi - point.latitude / 180 * pi,
         phi = point.longitude / 180 * pi, x, y, z;
     const _point = sphericalCoords(theta, phi, radius);
     x = _point[0];
