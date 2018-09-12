@@ -1,10 +1,11 @@
 {
   "name": "koords",
-  "version": "1.0.2",
+  "version": "1.1.0",
+  "engines" : { "node" : ">= 6.0" },
   "description": "Library to provide some basic geo functions",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha test/index"
+    "test": "mocha || true"
   },
   "keywords": [
     "geo",
@@ -16,6 +17,8 @@
   "author": "@Cereceres",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "^2.3.4"
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
   }
 }
