@@ -2,7 +2,13 @@
 
 const koords = require('../index');
 const assert = require('assert');
+const permutations = require('./permutations')();
+
 require('../truncate')();
+const messagePermutationsTest = `Consistency under permutations of points.
+             If application  sorts vertices, points [[0,1/4],[1/4,0],[-1/4,0],[0,-1/4]]
+          must be in the polygons formed by all permutations of the points
+                  [[3/2, 3/2], [-1, 1], [-(3/2), -(3/2)], [1, 0]]`;
 
 describe('Koords', () => {
     it('Should contains location (inside)', (done) => {
@@ -48,16 +54,25 @@ describe('Koords', () => {
         done();
     });
 
-    it('The distance from ecuador to polo is 40.007.161/4', (done) => {
+    it('Distance from ecuador to pole is 40.007.161/4', (done) => {
         const distance = koords.getDistance({ latitude : 0, longitude:0 }, { latitude:90, longitude:0 });
         assert.equal(distance, 10007.543398010284);
         done();
     });
 
-    it('The spherical area of a polygon with vertices: [0,0],[10,0],[10,10]',
-        (done) => {
-            const area = koords.getAreaSpherical([ [ 0, 0 ], [ 10, 0 ], [ 10, 10 ] ]).truncate(2);
-            assert(area === 19649731.09);
-            done();
-        });
+    it('The spherical area of a polygon with vertices: [0,0],[10,0],[10,10]', () => {
+        const area = koords.getAreaSpherical([ [ 0, 0 ], [ 10, 0 ], [ 10, 10 ] ]).truncate(2);
+        assert(area === 19649731.09);
+    });
+
+
+    it(messagePermutationsTest, () => {
+        const points = [ [ 0, 1 / 4 ], [ 1 / 4, 0 ], [ 0, -1 / 4 ], [ -1 / 4, 0 ] ];
+        const queryOnePointInAllPermutations = (point) => permutations
+            .map((permutation) => koords.containsLocation(permutation, point))
+            .every((result) => result);
+
+        const queryAllPointsContained = points.every(queryOnePointInAllPermutations);
+        assert(queryAllPointsContained === true);
+    });
 });

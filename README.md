@@ -13,8 +13,7 @@ $ npm install koords
 
 # Usage
 
-With a set of points=[[x1,y1],[x2,y2]....] that form a polygon find is a point extra given is inside or out of the polygon given too.
-
+For a given set of (2D)-points [[x1,y1],[x2,y2]....], we construct an anticlockwise polygon. We tell if a  point is inside of the polygon. 
 ```js
 
 let koors = require('koords')
@@ -42,8 +41,8 @@ koords.getAreaSpherical([[0,0],[10,0],[10,10]])
 Object with differents numerics methods to calculate the derivative of a function.
 
 ##Contributing
-In lieu of a formal style guide, take care to maintain the existing coding style.
-Add unit tests for any new or changed functionality. Lint and test your code.  For any bugs report please contact to me via e-mail: cereceres@ciencias.unam.mx.
+In lieu of a formal style guide, take care  of maintain the existing coding style.
+Add unit tests for any new or changed functionality. Lint and test your code.  For any bugs, please contact to me via e-mail: cereceres@ciencias.unam.mx.
 
 
 ## License
